@@ -5,6 +5,17 @@ import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import { enableScreens } from 'react-native-screens';
 import MealsNavigator from './navigation/MealsNavigator';
+import { createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux';
+import mealsReducer from './store/reducers/meals';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  "It appears that you are using old version of react-navigation library",
+]);
+LogBox.ignoreLogs([
+  "Your project is accessing the following APIs from a deprecated global rather than a module import: Constants (expo-constants).",
+]);
 
 const loadFonts = () => {
   return Font.loadAsync({
@@ -13,7 +24,15 @@ const loadFonts = () => {
   });
 }
 
-enableScreens();
+if (!__DEV__) {
+  enableScreens();
+}
+// enableScreens();
+
+const rootReducer = combineReducers({
+  meals: mealsReducer
+});
+const store = createStore(rootReducer);
 
 export default function App() {
   // const [loaded, error] = useFonts({
@@ -36,7 +55,7 @@ export default function App() {
       />
     ); }
 
-  return <MealsNavigator />
+  return <Provider store={store}><MealsNavigator /></Provider>
 }
 
 const styles = StyleSheet.create({
